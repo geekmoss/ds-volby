@@ -1,0 +1,16 @@
+aiohttp==3.7.4.post0
+async-timeout==3.0.1
+attrs==21.2.0
+certifi==2021.5.30
+chardet==4.0.0
+charset-normalizer==2.0.6
+discord-py-slash-command==3.0.1
+discord.py==1.7.3
+environ-config==21.2.0
+idna==3.2
+multidict==5.2.0
+requests==2.26.0
+typing-extensions==3.10.0.2
+urllib3==1.26.7
+Volby.cz @ git+https://github.com/geekmoss/py-volby.cz@bc82142477bcd7adaebd1fb3ddfb05064e31214b
+yarl==1.7.0

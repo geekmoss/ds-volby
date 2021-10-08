@@ -3,7 +3,7 @@ import environ
 
 @environ.config(prefix='')
 class Config:
-    debug = environ.var(False, converter=bool)
+    debug = environ.bool_var(False)
 
     discord_token = environ.var()
     discord_token_debug = environ.var('')

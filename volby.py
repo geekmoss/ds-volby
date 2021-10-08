@@ -14,7 +14,7 @@ def update():
 
     if LAST_UPDATE is None or (datetime.now() - LAST_UPDATE).total_seconds() > 60 * 3:
         print('loading data')
-        DATA = get_chamber_of_deputies_election_results(ChamberOfDeputiesElectionEnum.year_2017_by_court)  # TODO: Update
+        DATA = get_chamber_of_deputies_election_results(ChamberOfDeputiesElectionEnum.year_2021)
         LAST_UPDATE = datetime.now()
     else:
         print('cooldown on update...', LAST_UPDATE)
