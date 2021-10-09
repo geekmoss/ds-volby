@@ -11,7 +11,7 @@ class Volby(BaseCog):
     @command(name='volby')
     async def volby(self, ctx: Context):
         buttons = [
-            create_button(style=ButtonStyle.green, label='Průběžná výsledky', custom_id='all_parties'),
+            create_button(style=ButtonStyle.green, label='Průběžné výsledky', custom_id='all_parties'),
             create_button(style=ButtonStyle.blue, label='Stav sčítání', custom_id='counting_status'),
             create_button(style=ButtonStyle.blue, label='Přehled po krajích', custom_id='regions'),
         ]
