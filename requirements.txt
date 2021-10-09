@@ -8,8 +8,12 @@ discord-py-slash-command==3.0.1
 discord.py==1.7.3
 environ-config==21.2.0
 idna==3.2
+kaleido==0.2.1
 multidict==5.2.0
+plotly==5.3.1
 requests==2.26.0
+six==1.16.0
+tenacity==8.0.1
 typing-extensions==3.10.0.2
 urllib3==1.26.7
 Volby.cz @ git+https://github.com/geekmoss/py-volby.cz@bc82142477bcd7adaebd1fb3ddfb05064e31214b

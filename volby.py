@@ -1,8 +1,12 @@
 from discord import Embed
 from volby_cz import get_chamber_of_deputies_election_results, ChamberOfDeputiesElectionEnum
+from itertools import combinations
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 from volby_cz.models import Ps
 from datetime import datetime
 from parties_tag import TAGS
+from os.path import exists
 
 
 DATA: Ps = None
@@ -160,3 +164,69 @@ def region_detail(region_number) -> [Embed]:
              f'Data vygenerována: {DATA.generated.strftime("%H:%M:%S %d. %m. %Y")}')
 
     return [e1, e2]
+
+
+def get_coalition() -> (str, Embed):
+    update()
+
+    parties = [p for p in DATA.results.cr.parties if p.party_result.mandate_count > 0]
+    parties.sort(key=lambda x: x.party_result.mandate_count, reverse=True)
+
+    # mandate_labels = [TAGS[p.k_party] for p in parties]
+    mandate_labels = [p.party_name for p in parties]
+    mandate_values = [p.party_result.mandate_count for p in parties]
+
+    parties.sort(key=lambda x: x.party_result.vote_percent, reverse=True)
+    # percent_labels = [TAGS[p.k_party] for p in parties]
+    percent_labels = [p.party_name for p in parties]
+    percent_values = [p.party_result.vote_percent for p in parties]
+
+    # Pie Chart
+
+    file = f'/tmp/{LAST_UPDATE.timestamp()}.png'
+    if not exists(file):
+        fig = make_subplots(rows=1, cols=2, specs=[[{'type': 'pie'}, {'type': 'pie'}]])
+        fig.add_trace(go.Pie(title='Zisk hlasů', labels=percent_labels, values=percent_values, textposition='inside',
+                   textinfo='percent'), row=1, col=1)
+        fig.add_trace(go.Pie(title='Počet získáných mandátů', labels=mandate_labels, values=mandate_values, textposition='inside',
+                   textinfo='value+percent'), row=1, col=2)
+        fig.write_image(file)
+
+    # Possible Coalition
+    pairs = list(zip(mandate_labels, mandate_values))
+    winner = pairs[0] if parties else ('', 0)
+    coalition = []
+
+    for size in (2, 3):
+        for combo in combinations(pairs, size):
+            total_mandate = sum([v for _, v in combo])
+            if winner not in combo:
+                continue
+
+            if total_mandate < 101:
+                continue
+
+            coalition.append(combo)
+
+    if len(coalition) == 0:
+        for size in (4, 5):
+            for combo in combinations(pairs, size):
+                total_mandate = sum([v for _, v in combo])
+                if winner not in combo:
+                    continue
+
+                if total_mandate < 101:
+                    continue
+
+                coalition.append(combo)
+
+    coalition.sort(key=lambda x: (len(x), sum([v for _, v in x])))
+
+    return file, Embed(
+        title='Počet mandátů a možné složení většinové vlády',
+        timestamp=LAST_UPDATE,
+        description='\n\n'.join([
+            f'{sum([v for _, v in c])} - ' + ', '.join([f'{n} ({v})' for n, v in c])
+            for c in coalition
+            if sum([v for _, v in c]) > 100]),
+    )

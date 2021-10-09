@@ -1,10 +1,12 @@
 from discord.ext.commands import command, Context
 from discord_slash.utils.manage_components import create_button, create_actionrow, ComponentContext, create_select, \
     create_select_option
+from discord import File
 from discord_slash.model import ButtonStyle
 from discord_slash.cog_ext import cog_component
 from Cogs.BaseCog import BaseCog
-from volby import voting_status, all_parties, by_regions, x_get_parties, party_detail, x_get_regions, region_detail
+from volby import voting_status, all_parties, by_regions, x_get_parties, party_detail, x_get_regions, region_detail, \
+    get_coalition
 
 
 class Volby(BaseCog):
@@ -14,6 +16,8 @@ class Volby(BaseCog):
             create_button(style=ButtonStyle.green, label='Průběžné výsledky', custom_id='all_parties'),
             create_button(style=ButtonStyle.blue, label='Stav sčítání', custom_id='counting_status'),
             create_button(style=ButtonStyle.blue, label='Přehled po krajích', custom_id='regions'),
+            create_button(style=ButtonStyle.blue, label='Možné složení vlády', custom_id='coalition'),
+            create_button(style=ButtonStyle.blue, label='Graf výsledků', custom_id='chart'),
         ]
 
         select_party = create_select(options=[
@@ -65,3 +69,13 @@ class Volby(BaseCog):
     @cog_component()
     async def select_region(self, ctx: ComponentContext):
         await ctx.edit_origin(embeds=region_detail(ctx.selected_options))
+
+    @cog_component()
+    async def coalition(self, ctx: ComponentContext):
+        f, e = get_coalition()
+        await ctx.edit_origin(embed=e)
+
+    @cog_component()
+    async def chart(self, ctx: ComponentContext):
+        f, e = get_coalition()
+        await ctx.send(file=File(f))
