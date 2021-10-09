@@ -6,7 +6,7 @@ services:
       context: .
     working_dir: '/bot'
     env_file:
-      - ./.env4
+      - ./.env
     volumes:
       - "/etc/timezone:/etc/timezone:ro"
       - "/etc/localtime:/etc/localtime:ro"
